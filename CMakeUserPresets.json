@@ -1,9 +1,0 @@
-{
-    "version": 4,
-    "vendor": {
-        "conan": {}
-    },
-    "include": [
-        "/home/ming/Code/App/Client/build/Release/generators/CMakePresets.json"
-    ]
-}

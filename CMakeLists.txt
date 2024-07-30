@@ -1,9 +1,11 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 
-project(client)
+project(app)
 
-find_package(glog)
+find_package(fmt CONFIG REQUIRED)
+find_package(unofficial-curlpp CONFIG REQUIRED)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(app main.cpp)
 
-target_link_libraries(${PROJECT_NAME} glog::glog)
+target_link_libraries(app PRIVATE fmt::fmt)
+target_link_libraries(app PRIVATE unofficial::curlpp::curlpp)
