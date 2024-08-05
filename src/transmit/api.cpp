@@ -1,31 +1,13 @@
-#include <fmt/core.h>
-#include <nlohmann/json.hpp>
-#include <curlpp/cURLpp.hpp>
-#include <curlpp/Options.hpp>
-#include <curlpp/Easy.hpp>
-
-#include <iostream>
-#include <sstream>
-#include <string>
 #include <list>
-#include <thread>
-#include <random>
+#include <string>
 
-class WebServer
-{
-private:
-    std::string token;
-    curlpp::Cleanup cleanup; // 初始化 cURLpp
-    curlpp::Easy request;    // 创建一个 Request 对象
-    std::string baseUrl = "http://localhost:8000/";
+#include "api.hpp"
 
-public:
-    std::string url;
-    std::string dat;
-    std::string updateCpuUsage(float dat);
-    WebServer(std::string userName, std::string passWord);
-    ~WebServer();
-};
+#include <nlohmann/json.hpp> // json
+
+#include <curlpp/Easy.hpp>
+#include <curlpp/Options.hpp>
+#include <curlpp/cURLpp.hpp>
 
 WebServer::WebServer(std::string userName, std::string passWord)
 {
@@ -36,8 +18,8 @@ WebServer::WebServer(std::string userName, std::string passWord)
 
         // 数据json
         nlohmann::json datJson;
-        datJson["username"] = "xiaomingmingbai";
-        datJson["password"] = "love1999";
+        datJson["username"] = userName;
+        datJson["password"] = passWord;
 
         // 将 JSON 对象转换为字符串并打印
         std::string datjsonString = datJson.dump();
@@ -53,8 +35,8 @@ WebServer::WebServer(std::string userName, std::string passWord)
         request.setOpt(new curlpp::options::HttpHeader(headers));
 
         // 执行请求
-        std::string response;
-        std::ostringstream responseStream;
+        std::string                  response;
+        std::ostringstream           responseStream;
         curlpp::options::WriteStream ws(&responseStream);
         request.setOpt(ws);
         request.perform();
@@ -65,19 +47,19 @@ WebServer::WebServer(std::string userName, std::string passWord)
 
         // 解析json
         nlohmann::json responseJson = nlohmann::json::parse(response);
-        token = responseJson["token"];
+        token                       = responseJson["token"];
     }
-    catch (curlpp::RuntimeError &e)
+    catch (curlpp::RuntimeError& e)
     {
         std::cerr << "RuntimeError: " << e.what() << std::endl;
     }
-    catch (curlpp::LogicError &e)
+    catch (curlpp::LogicError& e)
     {
         std::cerr << "LogicError: " << e.what() << std::endl;
     }
 }
 
-std::string WebServer::updateCpuUsage(float dat)
+std::string WebServer::updataDeviceInfo(nlohmann::json datJson)
 {
     std::string response;
 
@@ -86,15 +68,8 @@ std::string WebServer::updateCpuUsage(float dat)
         // 设置URL
         request.setOpt(new curlpp::options::Url(baseUrl + "device/devices/1/"));
 
-        // 数据json
-        nlohmann::json datJson;
-        std::ostringstream stream;
-        stream << std::fixed << std::setprecision(2) << dat;
-        datJson["cpu_usage"] = stream.str();
-
         // 将 JSON 对象转换为字符串并打印
         std::string datjsonString = datJson.dump();
-        std::cout << "PATCH json data: " << datjsonString << std::endl;
 
         // 设置PATCH方法
         request.setOpt(new curlpp::options::CustomRequest{"PATCH"});
@@ -108,45 +83,23 @@ std::string WebServer::updateCpuUsage(float dat)
         request.setOpt(new curlpp::options::HttpHeader(headers));
 
         // 执行请求
-        std::ostringstream responseStream;
+        std::ostringstream           responseStream;
         curlpp::options::WriteStream ws(&responseStream);
         request.setOpt(ws);
         request.perform();
 
         // 获取响应
         response = responseStream.str();
-        std::cout << "Response: " << response << std::endl;
     }
-    catch (curlpp::RuntimeError &e)
+    catch (curlpp::RuntimeError& e)
     {
         std::cerr << "RuntimeError: " << e.what() << std::endl;
     }
-    catch (curlpp::LogicError &e)
+    catch (curlpp::LogicError& e)
     {
         std::cerr << "LogicError: " << e.what() << std::endl;
     }
     return response;
 }
 
-WebServer::~WebServer()
-{
-}
-
-int main()
-{
-    WebServer webServer("xiaomingmingbai", "love1999");
-
-    while (true)
-    {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<int> dis(20, 100);
-
-        float randomNumber = static_cast<float>(dis(gen));
-        webServer.updateCpuUsage(randomNumber);
-
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-    }
-
-    return 0;
-}
+WebServer::~WebServer() {}
