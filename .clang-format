@@ -1,0 +1,41 @@
+# 基础样式
+BasedOnStyle: LLVM
+
+# 缩进和对齐
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# 括号样式
+BreakBeforeBraces: Allman
+
+# 空格和换行
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+ColumnLimit: 200
+SpacesInParentheses: false
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: false
+
+# 注释样式
+CommentPragmas: '^ IWYU pragma:'
+
+# 命名空间
+NamespaceIndentation: None
+
+# 其他
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignTrailingComments: true
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakConstructorInitializersBeforeComma: false
+ConstructorInitializerIndentWidth: 4
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReflowComments: true
+SortIncludes: true
+SortUsingDeclarations: true
